@@ -1,0 +1,1155 @@
+CHAPTER 1
+INTRODUCTION
+1.1 MOTIVATION
+Searching for information on the Web is, for most people, a daily activity. Search
+and communication are by far the most popular uses of the computer. Many people in
+companies and universities are trying to improve search by coming up with effective
+ways to find the right information.
+The time and cost involved in information retrieval (IR) are considerable. More
+and more documents are nowadays used as electronic copies. Mostly people store
+these documents as pdf documents on their personal computers. But people generally
+forget the location and file names of these stored documents. It becomes a mess for
+the user to find the desired document even on its own personal computer and the user
+has to check individually many files after opening them in order to find the relevant
+one. It is then very important that the use of that time is as productive as possible.
+Information Retrieval is concerned with the return of relevant documents from a
+document collection given a user query.
+In this project, we are improving the query–search relevance for the biomedical
+text documents. For its successful implementation first of all indexing of the
+documents is done using the keywords which we extract by using our synonyms based
+tf.idf weighting scheme that we have developed and then ranking of the documents
+according to the user query is done in order to provide the most user relevant
+documents. Further we have optimized this process for the biomedical text documents
+by using MeSH thesaurus with our synonyms based tf.idf scheme for extracting
+keywords which are used for the indexing process for this desktop search engine. We
+have optimized it for biomedical text documents because nowadays, there is an
+increasing interest in text mining and information extraction strategies applied to the
+biomedical and molecular biology literature due to the increasing number of
+electronically available publications stored in databases such as MEDLINE which
+consists of references and abstracts on life sciences and biomedical topics.
+
+Page 1
+
+CHAPTER 2
+LITERATURE REVIEW
+2.1 TERM WEIGHTING:
+Term weighting is an important part in the process of information retrieval
+systems. Precise term weighting can greatly improve the process of finding index
+terms. The amount of influence of term in representing the document reflects on term
+weight. Traditional term weighting schemas like ‘TF.IDF’, Information gain etc. are
+not much useful in text documents. Feature Selection can be defined as the task of
+selection of subset features that describe the documents .Feature selection is used to
+select the relevant terms to represent the documents.
+2.1.1 ‘TF.IDF’:
+‘Term Frequency – Inverse Document Frequency’ or ‘TF.IDF’, which is
+commonly used and considered as one of the best existing weighting schemes. This
+‘TF.IDF’ is used to remove less significant weights from documents and helps to
+achieve better retrieval effectiveness. ‘TF.IDF’ is the most common weighting method
+used to describe documents in the Vector Space Model, particularly in IR problems.
+The ‘TF.IDF’ function weights each vector component (each of them relating to a
+word of the vocabulary) of each document on the following basis. First, it incorporates
+the word frequency in the document. Thus, the more a word appears in a document
+(e.g., its TF, term frequency is high) the more it is estimated to be significant in this
+document. In addition, IDF measures how infrequent a word is in the collection. This
+value is estimated using the whole training text collection at hand. Accordingly, if a
+word is very frequent in the text collection, it is not considered to be particularly
+representative of this document (since it occurs in most documents; for instance, stop
+words). In contrast, if the word is infrequent in the text collection, it is believed to be
+very relevant for the document. ‘TF.IDF’ is commonly used in IR to compare a query
+vector with a document vector using a similarity or distance function such as the
+cosine similarity function. There are many variants of ‘TF.IDF’.
+Term frequency–inverse document frequency, is a numerical statistic that is
+intended to reflect how important a word is to a document in a collection or corpus. It
+is often used as a weighting factor in information retrieval and text mining. The
+Page 2
+
+‘TF.IDF’ value increases proportionally to the number of times a word appears in the
+document, but is offset by the frequency of the word in the corpus, which helps to
+adjust for the fact that some words appear more frequently in general.
+Variations of the tf–idf weighting scheme are often used by search engines as a
+central tool in scoring and ranking a document's relevance given a user query. TF.IDF
+can be successfully used for stop-words filtering in various subject fields including
+text summarization and classification.
+‘TF.IDF’ is given by:
+‘TF.IDF’ = Term frequency * Inverse Document Frequency
+
+(1)
+
+Typically, the ‘TF.IDF’ weight is composed by two terms: the first computes
+the normalized Term Frequency (TF), aka. the number of times a word appears in a
+document, divided by the total number of words in that document; the second term is
+the Inverse Document Frequency (IDF), computed as the logarithm of the number of
+the documents in the corpus divided by the number of documents where the specific
+term appears.
+
+TF: Term Frequency, which measures how frequently a term occurs in a document.
+Since every document is different in length, it is possible that a term would appear
+much more times in long documents than shorter ones. Thus, the term frequency is
+often divided by the document length (aka. the total number of terms in the document)
+as a way of normalization:
+𝑇𝐹 =
+
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓𝑡𝑖𝑚𝑒𝑠 𝑎 𝑡𝑒𝑟𝑚(𝑡) 𝑎𝑝𝑝𝑒𝑎𝑟𝑠 𝑖𝑛 𝑡ℎ𝑒 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑒𝑟𝑚𝑠 𝑖𝑛 𝑡ℎ𝑒 𝑤ℎ𝑜𝑙𝑒 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡
+
+(2)
+
+IDF: Inverse Document Frequency, which measures how important a term is. While
+computing TF, all terms are considered equally important. However it is known that
+certain terms, such as "is", "of", and "that", may appear a lot of times but have little
+importance. Thus we need to weigh down the frequent terms while scale up the rare
+ones, by computing the following:
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠
+𝐼𝐷𝐹 = 𝑙𝑜𝑔2 (
+)
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠 𝑤𝑖𝑡ℎ 𝑡𝑒𝑟𝑚 𝑡 𝑖𝑛 𝑡ℎ𝑒𝑚
+Page 3
+
+(3)
+
+Why do we use log in the IDF?
+The main reason is to normalize values to the smaller digits. Because in most
+of the cases corpus size (total number of documents) is very big and because of this
+net IDF value becomes large number (without log\scale), if we use log scale we can
+normalize number to 1-2 digit number which makes more sense as value of score
+(rather than some 5 digit score) and overall IDF score can be normalized in some
+smaller range.
+‘TF.IDF’ and Cosine Similarity
+The major reason for google’s success is because of its pageRank algorithm.
+PageRank determines how trustworthy and reputable a given website is. But there is
+also another part. The input query entered by the user should be used to match the
+relevant documents and score them. For this ‘TF.IDF’ helps in a big way.
+
+Figure 1: Google search per day
+2.1.2 LIMITATIONS OF EXISTING ‘TF.IDF’
+1) It assumes that the counts of different words provide independent evidence of
+similarity.
+2) It makes no use of semantic similarity between the words.
+3) It does not consider the words which are synonyms of each other.
+
+Page 4
+
+2.1.3 SYNONYMS BASED TF.IDF (SB-TF.IDF)
+In the Synonyms Based ‘TF.IDF’, which we developed we have tried to remove the
+above mentioned three limitations of tf.idf.
+𝑻𝑭(𝒕) = (
+
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑖𝑚𝑒𝑠 𝑎 𝑡𝑒𝑟𝑚(𝑡) 𝑎𝑝𝑝𝑒𝑎𝑟𝑖𝑛𝑔 𝑖𝑛 𝑡ℎ𝑒 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡
+)
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑒𝑟𝑚𝑠 𝑖𝑛 𝑡ℎ𝑒 𝑤ℎ𝑜𝑙𝑒 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡
+
+(4)
+
+We have modified the inverse document frequency as follows:
+𝑶𝑳𝑫 𝑰𝑫𝑭(𝒕) = 𝑙𝑜𝑔2 (
+
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠 𝑖𝑛 𝑡ℎ𝑒 𝑐𝑜𝑟𝑝𝑢𝑠
+)
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠 𝑖𝑛 𝑤ℎ𝑖𝑐ℎ 𝑡𝑒𝑟𝑚 𝑡 𝑜𝑐𝑐𝑢𝑟𝑠
+
+(5)
+
+Synonyms Based IDF (SB-IDF) is defined as:
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠 𝑖𝑛 𝑡ℎ𝑒 𝑐𝑜𝑟𝑝𝑢𝑠
+𝐒𝐁 − 𝐈𝐃𝐅(𝐭) = 𝑙𝑜𝑔2 (
+)
+𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡 𝑖𝑛 𝑤ℎ𝑖𝑐ℎ 𝑎𝑛𝑦 𝑤𝑜𝑟𝑑 𝑜𝑢𝑡 𝑜𝑓 𝑡ℎ𝑒
+𝑡ℎ𝑒𝑠𝑎𝑢𝑟𝑢𝑠 𝑏𝑎𝑠𝑒𝑑 𝑐𝑙𝑢𝑠𝑡𝑒𝑟 𝑜𝑐𝑐𝑢𝑟𝑠
+
+(6)
+
+Hence our Synonyms Based TF.IDF (SB-TF.IDF) weighting scheme is as follows:
+
+𝑇𝑜𝑡𝑎𝑙 𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠 𝑖𝑛 𝑡ℎ𝑒 𝑐𝑜𝑟𝑝𝑢𝑠
+𝑖𝑛 𝑤ℎ𝑖𝑐ℎ 𝑎𝑛𝑦 𝑤𝑜𝑟𝑑 𝑜𝑢𝑡 𝑜𝑓 𝑡ℎ𝑒)
+𝑡ℎ𝑒𝑠𝑎𝑢𝑟𝑢𝑠 𝑏𝑎𝑠𝑒𝑑 𝑐𝑙𝑢𝑠𝑡𝑒𝑟 𝑜𝑐𝑐𝑢𝑟𝑠
+
+𝐒𝐁 − 𝐓𝐅. 𝐈𝐃𝐅 = 𝑇𝑒𝑟𝑚 𝐹𝑟𝑒𝑞𝑢𝑒𝑛𝑐𝑦 𝑋 𝑙𝑜𝑔2 (𝑁𝑢𝑚𝑏𝑒𝑟 𝑜𝑓𝑑𝑜𝑐𝑢𝑚𝑒𝑛𝑡𝑠
+
+(7)
+
+Explanation:
+
+First of all on the input document, the following operations are performed using KEA.
+1. Tokenizing
+2. Stopping
+3. Stemming
+The output we get from the above operations, is in the form of a
+test_document.key file which contains all the possible keywords without any
+particular order. All the keywords in this test_document.key file are searched in the
+thesaurus one by one and then for each of these keywords, the synonyms which are
+within a distance ‘d’ from the keyword in the tree structure of the thesaurus are
+collectively taken to form a cluster corresponding to that keyword.
+Page 5
+
+Then we calculate the IDF for each of the keywords as logarithm of total
+number of document in the corpus divided by the number of documents in which any
+one word out of the thesaurus based cluster occurs.
+After that we calculate the term frequency for each of these keywords which is
+equal to the number of times a word is appearing in the document.
+Then we calculate the ‘SB-TF.IDF’ by multiplying the above calculated tf and
+sb-idf. Then we sort these keywords in the decreasing order and stores them into the
+separate file test_document.key1 file, out of which we can choose the top ‘n’
+keywords. The keyword with more tf.idf value is more appropriate keyword.
+2.3 MEDLINE
+MEDLINE is the largest component of PubMed, the freely accessible online
+database of biomedical journal citations and abstracts created by the U.S. National
+Library of Medicine. Approximately 5,400 journals published in the United States and
+more than 80 other countries have been selected and are currently indexed for
+MEDLINE. PubMed. Comprises more that 22 million biomedical literature from
+Medline, life science journals and online books. Since 1990, the MEDLINE database
+has grown faster than before with more documents available in electronic form. The
+cost of human indexing of the biomedical literature is high, so many attempts have
+been made in order to provide automatic indexing. A unique feature of MEDLINE is
+that the records are indexed with NLM's controlled vocabulary i.e the Medical Subject
+Headings (MeSH).
+The availability of large medical online collections, such as MEDLINE poses new
+challenges to information and knowledge management like indexing.
+
+
+Ambiguity of lot of domain-specific terminology.
+
+
+
+Only MESH terms are not provide conceptual information for searching and
+indexing
+
+
+
+PubMed will not apply any ranking strategy.
+
+
+
+Rapid proliferation of biomedical literature need unique information extraction
+tools.
+
+PubMed and Medline documents provide very flexible resource for researchers.
+
+Page 6
+
+2.4 MeSH THEASURUS
+Medical Subject Headings (MeSH) mainly consists of the controlled
+vocabulary and a MeSH Tree. The controlled vocabulary contains several types of
+terms, such as Descriptors, Qualifiers, Publication Types, Geographics, and Entry
+terms. Descriptor terms are main concepts or main headings. Entry terms are the
+synonyms or the related terms to descriptors. For example, Neoplasms as a descriptor
+has the following entry terms {Cancer, Cancers, Neoplasm, Tumors, Tumor, Benign
+Neoplasm, Neoplasm, Benign}. MeSH descriptors are organized in a MeSH Tree,
+which can be seen as the MeSH Concept Hierarchy. In the MeSH Tree, there are 15
+categories (e.g., category A for anatomic terms), and each category is further divided
+into subcategories. For each subcategory, corresponding descriptors are hierarchically
+arranged from most general to most specific. MeSH (Medical Subject Headings) is the
+NLM controlled vocabulary thesaurus used for indexing articles for PubMed.
+Use of MeSH
+
+
+Use of MeSH in Online Retrieval
+
+
+
+Use of MeSH by Indexers
+
+MeSH descriptors have been used to index PubMed articles and used as features to
+extract information form PubMed articles. Used MeSH descriptors as the selected
+features for classification and showed that there is a significant improvement of
+classification performance. Only Mesh descriptors are not sufficient for indexing and
+classifying the PubMed documents. Terms are assigned more weight if they are
+semantically similar with each other Terms are first clustered by calculating semantic
+similarity using MeSH ontology on PubMed document sets. Then the documents are
+mapped to the corresponding term cluster.
+
+Page 7
+
+2.5 INDEXING PROCESS
+
+Figure 2: Indexing Process
+
+1) Text Acquisition: Identifies and acquires documents for search Engine. Many
+types – web, enterprise, desktop, web crawlers follow links to find document. Must
+efficiently find huge numbers of web pages (coverage) and keep them up-to-date
+(freshness)
+Single site crawlers for site search
+Topical or focused crawlers for vertical search
+Document crawlers for enterprise and desktop search
+Follow links and scan directories
+Document data store:
+Stores text, metadata, and other related content for documents.
+Metadata is information about document such as type and creation date. Other content
+includes links, anchor text. It provides fast access to document contents for search
+engine components e.g. result list generation.
+Could use relational database system. More typically, a simpler, more efficient
+storage system is used due to huge numbers of documents.
+
+Page 8
+
+Figure 3: Indexing Subsystem
+
+2) Text Transformation
+a) Parsing: Processing the sequence of text tokens in the document to recognize the
+structural elements. It is the process of analysing a string of symbols, either in natural
+language or in computer languages, conforming to the rules of a formal grammar.
+Within computational linguistics the term is used to refer to the formal analysis by a
+computer of a sentence or other string of words into its constituents, resulting in a
+parse tree showing their syntactic relation to each other, which may also contain
+semantic and other information.
+A parser is a software component that takes input data (frequently text) and
+builds a data structure – often some kind of parse tree or other hierarchical structure –
+giving a structural representation of the input, checking for correct syntax in the
+process. The parsing may be preceded or followed by other steps, or these may be
+combined into a single step. The parser is often preceded by a separate lexical
+Page 9
+
+analyser, which creates tokens from the sequence of input characters; alternatively,
+these can be combined in scannerless parsing. Parsers may be programmed by hand or
+may be automatically or semi-automatically generated by a parser generator. Parsing
+is complementary to templating, which produces formatted output. e.g., titles, links,
+headings, etc.
+
+2) Tokenizing:
+Tokenization is the process of breaking a stream of text up into words,
+phrases, symbols, or other meaningful elements called tokens. The list of tokens
+becomes input for further processing such as parsing or text mining. Tokenization is
+useful both in linguistics (where it is a form of text segmentation.
+Typically, tokenization occurs at the word level. However, it is sometimes difficult to
+define what is meant by a "word". Often a tokenizer relies on simple heuristics, for
+example:
+
+
+Punctuation and whitespace may or may not be included in the resulting list of
+tokens. All contiguous strings of alphabetic characters are part of one token;
+likewise with numbers.
+
+
+
+Tokens are separated by whitespace characters, such as a space or line break,
+or by punctuation characters.
+
+Tokenizers are used to break a string down into a stream of terms or tokens. A
+simple tokenizer might split the string up into terms wherever it encounters
+whitespace or punctuation.
+3. Stopping:
+Remove common words e.g., “and”, “or”, “the”, “in”. It has some impact on
+efficiency and effectiveness.
+
+Sometimes, some extremely common words which
+
+would appear to be of little value in helping select documents matching a user need
+are excluded from the vocabulary entirely. These words are called stop words. The
+general strategy for determining a stop list is to sort the terms by collection frequency
+(the total number of times each term appears in the document collection), and then to
+take the most frequent terms, often hand-filtered for their semantic content relative to
+Page 10
+
+the domain of the documents being indexed, as a stop list, the members of which are
+then discarded during indexing.
+4.Stemming is the term used in information retrieval to describe the process for
+reducing inflected (or sometimes derived) words to their word stem , base or root form
+- generally a written word form. The stem needs not to be identical to the
+morphological root of the word; it is usually sufficient that related words map to the
+same stem, even if this stem is not in itself a valid root. Many search engines treat
+words with the same stem as synonyms as a kind of query expansion, a process called
+conflation.
+Stemming programs are commonly referred to as stemming algorithms or stemmers.
+Example: Computer, computes all reduced to a common stem compute.
+3. Index Creation:
+Document Statistics - Gathers counts and positions of words and other features. It
+is used in ranking algorithm.
+•
+
+Weighting – It computes weights for index terms. It is used in ranking
+algorithm. e.g., ‘TF.IDF’ weight.
+
+Conclusion: In these case, for the index creation, ‘TF.IDF’ weighting scheme is used
+for assigning the score to the documents. It computes weights for the index terms.
+But there are several limitations in it:
+1) It computes document similarity directly in the word-count space, which may be
+slow for large vocabularies.
+2) It assumes that the counts of different words provide independent evidence of
+similarity.
+3) It makes no use of semantic similarity between the words.
+4) It does not consider the words which are synonyms of each other.
+
+Page 11
+
+2.6 SEARCH SUBSYSTEM
+
+Figure 4: Search Subsystem
+
+Retrieval Models: We are using two types of retrieval models while ranking of the
+documents. These are exact match retrieval model and the best match retrieval model.
+In exact match retrieval models, the query specifies the precise retrieval criteria and
+every document either matches or fails to match the query. The results we get in pure
+exact match would be unordered. In the best match retrieval models, the query
+describes the good or “best” matching documents, thus every documents matches the
+query to some extent and the result we get is a ranked list of documents.
+a) Boolean Operations: The Boolean retrieval model (exact matching) is a model for
+information retrieval in which we can pose any query which is in the form of a
+Boolean expression of terms, that is, in which terms are combined with the operators
+and, or, and not. For example: query blue and red brings back all the documents with
+blue and red in them.
+
+Page 12
+
+b) Ranking by similarity to query:
+In ranking by similarity, the most similar documents to a query are retrieved.
+The similarity is equated to the relevance and the most similar documents are
+considered to be the most relevant documents. There are various similarity measures
+like cosine similarity, dice coefficient, etc. which can be used to find the similarity
+between two documents. While finding similarity, the document and query are
+considered as a bag of words/tokens, and the weight for each of these words is used
+while computing the similarity. Besides, these weights can be just the word count /
+frequency of that word in its document or query, or it can also be like TF.IDF weight.
+We would be using the SB-TF.IDF weights for improving the relevance as these
+improved weights would result in finding better similarity between documents, and
+hence we would get the better and more relevant documents in result to a query.
+
+Figure 5: Ranking Process
+
+Page 13
+
+i) Cosine Similarity:
+In this method, the term vector space is used which is a n-dimensional space,
+where n is the number of different terms/tokens used to index a set of documents. The
+document and query are represented as vectors. The magnitude of a document/query
+vector di in dimension j is its weight wij, where wij the term weight of term j in
+document i. These term weights could be simple term count / term frequency, or
+TF.IDF weights. But for improving the search relevance we have used the Synonyms
+Based TF.IDF (SB-TF.IDF) weights.
+
+Figure 6: Document Representation in Term Vector Space
+
+In finding the cosine similarity, the similarity between two documents is a function of
+the angle between their vectors in the term vector space. As the angle between two
+document vectors or a document vector and a query vector increases, the similarity
+between them starts decreasing. Thus, two vectors with a zero angle between them
+would be most similar to each other.
+
+Page 14
+
+d = (x1, x2, x3,…, xn,) is a vector in an n-dimensional vector space.
+Length of d is given by:
+|d|2 = (x12 + x22 + x32 + … xn2)
+
+(8)
+
+|d| = (x12 + x22 + x32 + … xn2)1/2
+
+(9)
+
+If d1 and q1 are document vector and query vector respectively, then:
+Dot Product between a document and query is given as:
+d1.q1 = w11wq11 + w12wq22 + w13wq23 +…+ w1nwq2n
+
+(10)
+
+where wqij is the weight of the jth term of the ith query.
+
+𝐜𝐨𝐬(Ɵ) =
+
+𝒅𝟏 .𝒅𝟐
+
+(11)
+
+|𝒅𝟏 |.|𝒅𝟐 |
+
+So, cosine coefficient can also be expressed as:
+Cosine coefficient =
+
+𝑄 ⋂𝐷
+|𝑄||𝐷|
+
+(12)
+
+Figure 7: Cosine Similarity between two document vectors
+
+Thus, using the cosine similarity, for a query q, the n most similar documents ranked
+in the order of their similarity are retrieved.
+
+Page 15
+
+ii) Dice Coefficient:
+Dice coefficient is another similarity measure used to find the similarity
+between two vectors like a document vector and a query vector. Dice coefficient is
+calculated as:
+Dice coefficient = 2
+
+𝑄 ⋂𝐷
+|𝑄|+ |𝐷|
+
+(13)
+
+Here again, we have used our synonyms based TF.IDF (SB-TF.IDF) weights for the
+calculation of length of document vectors and query vectors as we did in the case of
+cosine coefficient.
+
+Page 16
+
+CHAPTER 3
+IMPLEMENTATION AND RESULTS
+3.1 Keyword Extraction
+
+Test_document.txt
+
+KEA :
+Tokenizer
+
+Test_document.key
+
+Stopping
+Stemming
+
+Let us choose
+top 10 keywords
+
+Weighted
+keywords for
+doc1
+
+Our new ‘SB-TF.IDF’
+java program
+
+Mesh Thesaurus
+
+Figure 8: Keyword Extraction Process
+First of all on the input document, the following operations are performed using KEA.
+1. Tokenizing
+2. Stopping
+3. Stemming
+Page 17
+
+The output we get from the above operations, is in the form of a
+test_document.key file which contains all the possible keywords without
+
+any
+
+particular order. All the keywords in this test_document.key file are searched in the
+thesaurus one by one and then for each of these keywords, the top three levels from
+the tree structure of the thesaurus are collectively taken to form a cluster
+corresponding to that keyword.
+Then we calculate the IDF for each of the keywords as logarithm of total
+number of document in the corpus divided by the number of documents in which any
+one word out of the thesaurus based cluster occurs.
+After that we calculate the term frequency for each of these keywords which is
+equal to the number of times a word is appearing in the document.
+Then we calculate the new ‘TF.IDF’ by multiplying the above calculated tf
+and idf. Then we sort these keywords in the decreasing order and stores them into the
+separate file test_document.key1 file, out of which we are choosing the top 10
+keywords. The keyword with more tf.idf value is more appropriate keyword.
+We have used the MESH vocabulary in our proposed work. In the MeSH Tree,
+there are 15 categories (e.g., category A for anatomic terms), and each category is
+further divided into subcategories. For each subcategory, corresponding descriptors
+are hierarchically arranged from a most general to most specific. MeSH (Medical
+Subject Headings) is the NLM controlled vocabulary thesaurus used for indexing
+articles for PubMed.
+Firstly, we will give the input document to the KEA algorithm. The output of
+the kea is a .key file that consist of keywords but without any particular order.
+Then that keyword from the file is taken and is checked in the MESH tree. If
+the keyword is found, then we will consider the cluster consisting of three level of the
+corresponding keyword.
+e.g - If the keyword is Brain, then its descriptor is compared with the other words
+descriptor in the MESH.If the brain descriptor is contained in the other word
+descriptor, then that words is considered as the synonyms of the Brain Keyword and
+considered to be a cluster which can be used effectively for the IDF calculation.
+Page 18
+
+BRAIN: A08.186.211(Descriptor)
+
+Blood
+
+Brain
+
+Barrier:
+
+(A08.186.211.035)
+
+BrainStem(A08.186.211.132)
+
+Meshencephalon(A08.186.211.132.659)
+
+CerebralPeducncle(A08.186.211.132.659.413)
+Figure 9: Snippet of Mesh Tree
+
+We have now chosen the cluster of synonyms up to three levels as:-
+
+Figure 10: Pruned Mesh Tree to get synonyms cluster
+
+Page 19
+
+Implementation practically has been made as a program using java language.
+Then idf is calculated by finding the documents in which the any of of the word out of
+cluster is appearing. That document is counted for the idf.
+Then this term is multiplied with the term frequency. And finally we sort the
+keywords according to their decreasing ‘TF.IDF’ value. And the top 10 keywords we
+have chosen to represent the document. This shows our final output which address the
+three limitations of ‘TF.IDF’ we have mentioned earlier.
+3.2 Comparison of Keywords from SB-TF.IDF with those from traditional
+TF.IDF
+We have applied our SBT scheme and the conventional TF.IDF scheme on the
+National Library of Medicine data set and for the 5 documents we have compared (as
+in Table I) the extracted keywords’ results we got after applying both the traditional
+TF.IDF and the new SBT weighting scheme.
+TABLE I.
+
+COMPARISON OF TOP 30 KEYWORDS FROM TRADITIONAL TF.IDF AND SBTF.IDF FOR 5 NLM DOCUMENTS
+NLM
+Keyword
+Document
+
+Keyword Rank with
+
+11825341
+
+Blood
+
+13
+
+12
+
+Positive
+
+Heart
+
+16
+
+15
+
+Positive
+
+Radioactivity
+
+18
+
+17
+
+Positive
+
+Ribose
+
+15
+
+18
+
+Negative
+
+Health
+
+8
+
+7
+
+Positive
+
+Evaluation
+
+3
+
+2
+
+Positive
+
+Neoplasms
+
+5
+
+6
+
+Negative
+
+Cesin
+
+5
+
+4
+
+Positive
+
+Chitinase
+
+9
+
+8
+
+Positive
+
+11825346
+
+11835696
+
+Traditional SBTF.IDF
+TF.IDF
+
+Page 20
+
+Change
+in
+Rank:
+
+`
+
+11876827
+
+12202594
+
+Glucose
+
+14
+
+13
+
+Positive
+
+Absorbance
+
+18
+
+17
+
+Positive
+
+Precipitation
+
+20
+
+19
+
+Positive
+
+Proteases
+
+8
+
+9
+
+Negative
+
+Crinipellis
+
+4
+
+3
+
+Positive
+
+Mycelium
+
+3
+
+6
+
+Positive
+
+Sugar
+
+13
+
+20
+
+Negative
+
+Lephalosporius 3
+
+2
+
+Positive
+
+Antibiotic
+
+5
+
+4
+
+Positive
+
+Hydrogen
+
+12
+
+11
+
+Positive
+
+Placement
+
+29
+
+28
+
+Positive
+
+Pencillin
+
+2
+
+3
+
+Negative
+
+Enzyme
+
+4
+
+5
+
+Negative
+
+Aspactic acid
+
+11
+
+13
+
+Negative
+
+Plasmids
+
+28
+
+29
+
+Negative
+
+Pain
+
+23
+
+22
+
+Positive
+
+Phenotype
+
+24
+
+23
+
+Positive
+
+Borrelia
+Burgdor Fori
+
+25
+
+24
+
+Positive
+
+Genes
+
+26
+
+25
+
+Positive
+
+Plasmed
+
+22
+
+27
+
+Negative
+
+The results shown in Table I are for 5 documents out of the 500 documents present
+in the National Library of Medicine data set. So, the total number of documents in the
+corpus is taken as 500 during the IDF calculations in both the cases. Here, for the
+cluster of synonyms, we have used the MeSH thesaurus.
+As by taking into account, the cluster of synonyms while calculating the IDF value
+of a keyword, the overall IDF value decreases and thus the ‘TF.IDF’ value of that
+keyword also decreases. This helps us in getting the more unique keywords out of a
+document in a corpus which is in accordance with the Zipf'’s law.
+Page 21
+
+On further analyzing the results from Table I in Table II, we say that there is around
+10% improvement in the keywords (which match with the manually assigned) that we
+get on applying the SBT as compared to those we get from traditional TF.IDF.
+TABLE II.
+
+PERCENTAGE IMPROVEMENT IN SB-TF.IDF
+
+Document No. of
+keywords
+Name
+with
+positive
+change in
+ranks
+
+No. of
+keywords
+with
+negative
+change in
+ranks
+
+Number
+of better
+keywords
+achieved
+(n)
+
+Percentage of
+improved
+keywords:
+((n/30)*100)%
+
+11825341
+
+3
+
+1
+
+3
+
+10
+
+11825346
+
+2
+
+1
+
+2
+
+6.67
+
+11835696
+
+7
+
+2
+
+4
+
+13.33
+
+11876827
+
+4
+
+4
+
+3
+
+10
+
+12202594
+
+4
+
+1
+
+3
+
+10
+
+Average %age:
+
+10%
+
+3.3 Indexing and Ranking of documents according to Query
+Using these keywords which we have extracted using our SB-TF.IDF, Indexing is
+done using relational tables in MySQL.
+
+Figure 11: Snapshot of the index of documents
+
+Page 22
+
+As our main focus is to improve the search relevance in order to provide the
+better and relevant results to the user, we have ignored the working efficiency of the
+indexing technique.
+The query is taken as input from the user through an input text box using PHP.
+Using this query from the user along with the index we created and the SB-TF.IDF
+weights of the keywords, we have then calculated the lengths of the document vectors
+and the query vectors, which were then used for calculating the cosine coefficients and
+the dice coefficients.
+Then, the documents were ranked according to their cosine coefficients and
+dice coefficients.
+Cosine coefficient =
+
+Dice coefficient = 2
+
+𝑄 ⋂𝐷
+|𝑄||𝐷|
+
+(11)
+
+𝑄 ⋂𝐷
+|𝑄|+ |𝐷|
+
+(12)
+
+Figure 12: Snapshot of the results based on cosine similarity using SB-TF.IDF for weights
+
+Page 23
+
+Figure 13: Snapshot of the results based on dice coefficient using SB-TF.IDF for weights
+
+Figure 14: Snapshot of the results based on cosine similarity using traditional TF.IDF for weights
+
+Page 24
+
+Figure 15: Snapshot of the results based on dice coefficient using traditional TF.IDF for weights
+
+These search results have been optimized for biomedical text documents as it
+uses MeSH thesaurus for extracting keywords. These results are presented to the user
+along with the values of cosine coefficients and dice coefficients.
+A comparison of the results we get through cosine similarity using Synonyms
+Based TF.IDF weights clearly shows the improvement over the search results which
+we get using simple Term Frequency/ Term weights or traditional TF.IDF weights in
+computing cosine coefficients.
+As evident from the comparison of results in Fig. 12 and Fig. 14 shown above
+the ranking done using SB-TF.IDF weights is more relevant to the user query (which
+was made from the keywords of the document) than that done using traditional
+TF.IDF for weights of the terms.
+Also the results from cosine similarity were similar to those from dice
+coefficient. Only their values were different, but the order of ranking of the documents
+was almost same in both cases.
+
+Page 25
+
+CHAPTER 4
+CONCLUSION
+4.1 Salient Features of our Project Work
+The search we usually do for searching documents on our personal computers
+provides us results which just contain those search terms, i.e. they are implementing
+the Boolean exact search. Their results are not ranked according to the user relevance,
+and they do not consider the synonyms for the terms in the query. Also in most of the
+cases their search is based on the file-name of the documents like in case of pdf
+documents.
+
+But in our implementation, we have improved upon the above mentioned
+problems. Our implementation results include results based on the keywords and their
+synonyms also. The relative ranking of the documents according to the user query is
+also done using cosine similarity measure. And, we are providing results based on the
+content of the text documents which could be in pdf format also.
+4.2 Conclusion
+Our Synonyms Based - Term Frequency – Inverse Document Frequency (SBTF.IDF) weighting scheme, uses clusters of synonyms based on a thesaurus related to
+the respective domain of the input text document. As by taking into account, the
+cluster of synonyms by calculating the IDF value of a keyword, the overall IDF value
+decreases and thus the ‘TF.IDF’ value of that keyword also decreases. This helps us in
+getting the more unique keywords out of a document in a corpus which is in
+accordance with the Zipf'’s law.
+Zipf'’s law states that given some corpus of natural language utterances, the
+frequency of any word is inversely proportional to its rank in the frequency table.
+
+Page 26
+
+Figure 16: Zipf’s Law
+Rank*frequency = constant
+
+These better keywords along with their SB-TF.IDF weights are further used in
+our indexing process and then also during the calculations of lengths of the document
+vectors and query vectors for computing the cosine coefficient for similarity between
+a document and a query.
+We have also considered the synonyms of the terms in the query and their
+weights also computed using SB-TF.IDF weighting scheme. Our results are optimized
+specially for biomedical text documents by using MeSH thesaurus for extracting
+keywords.
+
+Page 27
+
+Figure 17: Snapshot of the results based on cosine similarity using SB-TF.IDF for weights
+
+Figure 18: Snapshot of the results based on cosine similarity using traditional TF.IDF for weights
+
+As evident from the results, shown above the ranking done using SB-TF.IDF weights
+is more relevant to the user query (which was made from the keywords of the
+document) than that done using traditional TF.IDF for weights of the terms.
+
+Page 28
+
+4.3 Future scope of this project:
+1.) This project work could be improved further to remove redundant files to save
+storage space.
+2.) It can also be used to find the similar documents in response to a document
+uploaded by the user.
+
+Page 29
+
+REFERENCES
+[1] S. Sagar Imambi, and T. Sudha, “Indexing of Medline Documents – A Text Mining
+Approach,”
+
+International
+
+Journal
+
+of
+
+Latest
+
+Research
+
+in
+
+Science
+
+and
+
+Technology,vol.2, Issue 1: pp. 582-585, Jan.-Feb. 2013.
+[2] W. Bruce Croft, Donald Metzler and Trevor Strohman, “Search Engines:
+Information Retrieval in Practice.”
+[3] http://googledesktop.blogspot.com/2011/09/google-desktop-update.html
+[4] Christopher D. Manning, Prabhakar Raghavan and Hinrich Schutze,
+“Introduction to Information Retrieval.”
+[5] S. Sagar Imambi, and T. Sudha, “Indexing of Medline Documents – A Text Mining
+Approach,”
+
+International
+
+Journal
+
+of
+
+Latest
+
+Research
+
+in
+
+Science
+
+and
+
+Technology,vol.2, Issue 1: pp. 582-585, Jan.-Feb. 2013.
+[6] Ian H. Witten , Gordon W. Paynter , Eibe Frank , Carl Gutwin , Craig G. NevillManning, “KEA: practical automatic keyphrase extraction”, Proceedings of the fourth
+ACM conference on Digital libraries, p.254-255, August, 1999.
+[7] Stephen Robertson, “Understanding Inverse Document Frequency: On theoretical
+arguments for IDF”, Journal of Documentation vol. 60 no. 5, pp 503-520, 2004.
+[8] A. Keerthiram Murugesan, and B. Jun Zhang, “A New Term Weighting Scheme
+for Document Clustering”, Proceedings of the 2011 International Conference on Data
+Mining, pp. 210-213, 2011.
+[9] Donald Metzler, “Generalized Inverse Document Frequency,” Proceedings of the
+ACM Conference on Information and Knowledge Management (CIKM 2008), 2008.
+[10] Ronan Cummins, Colm O’Riordan, “Evolved Term-Weighting Schemes in
+Information Retrieval: An Analysis of the Solution Space,” Artificial Intelligence
+Review, v. 26 n. 1-2, pp. 35-47, Oct. 2006.
+[11] Pascal Soucy, and Guy W. Mineau, “Beyond ‘TFIDF’ Weighting for Text
+Categorization in the Vector Space Model,” International Joint Conference on
+Artificial Intelligence, Edinburgh Scotland: UK, pp. 1130-1135, 2005.
+Page 30
+
+[12] Ronan Cummins,“The Evolution and Analysis of Term-Weighting Schemes in
+Information Retrieval,” Doc. Philosophy thesis, National University of Ireland,
+Galway, May 2008.
+[13] National Library of Medicine data set with 500 documents. [Online].
+Available:https://code.google.com/p/mauiindexer/downloads/detail?name=NLM_500.zip&can=2
+[14]
+
+Medical
+
+Subject
+
+Headings
+
+(MeSH)
+
+http://www.nlm.nih.gov/pubs/factsheets/mesh.html
+
+Page 31
+
+[Online].
+
+Available:
+
+
